@@ -2,22 +2,26 @@ package mazegame.maze;
 
 import java.awt.Color;
 import java.awt.Graphics;
+
 import javax.swing.*;
 
 public class Draw extends JPanel {
-	private int pensz;
 	private Maze maze;
+	private Item item;
 
-	public Draw(int pensz, Maze maze) {
+	public Draw() {
 		super();
-		this.pensz = pensz;
-		this.maze = maze;
+		this.setFocusable(true);
+		this.setVisible(true);
+		this.maze = new Maze();
+		this.item = new Item(0, 0);
 	}
 
-	public void paintComponent(Graphics g) {
+	synchronized public void paintComponent(Graphics g) {
 		int[][] mz = maze.getMaze();
 		int row = maze.getRow();
 		int col = maze.getCol();
+		super.paintComponent(g);
 		for (int i = 0; i < row; i++) {
 			for (int j = 0; j < col; j++) {
 				if (i == 0 && j == 0) {
@@ -31,16 +35,40 @@ public class Draw extends JPanel {
 				g.fillRect(i * 15, j * 15, 15, 15);
 			}
 		}
+		g.setColor(Color.RED);
+		g.fillOval(item.getX() * 15, item.getY() * 15, 14, 14);
 	}
 
-	public static void main(String[] args) {
-		JFrame frame = new JFrame();
-		frame.setSize(480, 507);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		Maze mz = new Maze();
-		Draw draw = new Draw(12, mz);
-		frame.setLocation(600, 120);
-		frame.add(draw);
-		frame.setVisible(true);
+	public int isMovePossible(char dir) {
+		// row-->x, col-->y
+		int x = this.item.getX();
+		int y = this.item.getY();
+		if (dir == 'l')
+			x--;
+		else if (dir == 'r')
+			x++;
+		else if (dir == 'u')
+			y--;
+		else if (dir == 'd')
+			y++;
+		else
+			return 0;
+		return maze.isblocked(x, y);
+	}
+
+	public void paintAgain(char dir) {
+		int x = this.item.getX();
+		int y = this.item.getY();
+		if (dir == 'l')
+			x--;
+		else if (dir == 'r')
+			x++;
+		else if (dir == 'u')
+			y--;
+		else if (dir == 'd')
+			y++;
+		this.item.setX(x);
+		this.item.setY(y);
+		repaint();
 	}
 }

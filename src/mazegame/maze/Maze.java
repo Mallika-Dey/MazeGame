@@ -29,6 +29,12 @@ public class Maze {
 		return maze;
 	}
 
+	public int isblocked(int x, int y) {
+		if (x < 0 || y < 0 || x > this.row || y > this.col || this.maze[x][y] == 1)
+			return 0;
+		return (this.maze[x][y] == 0) ? 1 : 2;
+	}
+
 	private int find(int u) {
 		if (this.par[u] == u)
 			return u;
